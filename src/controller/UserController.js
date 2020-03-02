@@ -1,5 +1,4 @@
-const User = require('../models/User');
-// const Yup = require('yup');
+const User = require('../schema/User');
 module.exports = {
     async store(req, res) {
 
@@ -43,7 +42,7 @@ module.exports = {
             location
         });
 
-        return res.json(user)
+        return res.json(user);
 
     },
     async update(req, res) {
