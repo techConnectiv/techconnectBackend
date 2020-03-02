@@ -10,17 +10,17 @@ const UserSchema = new mongoose.Schema({
   },
   login: {
     type: String,
-    require: true
+    require: true,
   },
   password: {
     type: String,
     required: true,
     select: false,
-    virtual: true
+    virtual: true,
   },
   password_hash: {
     type: String,
-    virtual: true
+    virtual: true,
   },
   email: {
     type: String,
@@ -31,36 +31,37 @@ const UserSchema = new mongoose.Schema({
   cpf: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
   dtNasc: {
     type: Date,
-    required: true
+    required: true,
   },
   sexo: {
     type: String,
     enum: ['M', 'F', 'OUTROS'],
-    required: true
+    required: true,
   },
   address: Address,
   tel: {
     res: {
-      type: Number
+      type: Number,
     },
     movel: {
       type: Number,
       required: true,
-      unique: true
-    }
+      unique: true,
+    },
   },
   location: {
     type: PointSchema,
-    index: '2dsphere' //eixo X e Y
-  }
+    index: '2dsphere', // eixo X e Y
+  },
+});
 
-}).pre('save', async user => {
+UserSchema.pre('save', async user => {
   if (user.password) {
-    user.password_hash = await bcrypt.hash(user.password, 10);
+    UserSchema.password_hash = await bcrypt.hash(user.password, 10);
   }
   return this;
 });
