@@ -18,10 +18,6 @@ const UserSchema = new mongoose.Schema({
     select: false,
     virtual: true,
   },
-  password_hash: {
-    type: String,
-    virtual: true,
-  },
   email: {
     type: String,
     unique: true,
@@ -59,11 +55,11 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre('save', async user => {
-  if (user.password) {
-    UserSchema.password_hash = await bcrypt.hash(user.password, 10);
-  }
-  return this;
+UserSchema.pre('save', async function (next) {
+  const hash = await bcrypt.hash(this.password, 10);
+  this.password = hash;
+
+  next();
 });
 
 module.exports = mongoose.model('User', UserSchema);

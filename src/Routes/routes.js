@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/auth');
 const routes = Router();
 
 routes.post('/cadastro', UserController.store);
-routes.post('login', SessionController.store);
+routes.post('/login', SessionController.store);
 routes.put('/user', authMiddleware);
 
 module.exports = routes;

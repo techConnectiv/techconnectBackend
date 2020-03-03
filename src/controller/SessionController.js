@@ -1,30 +1,21 @@
 const jwt = require('jsonwebtoken');
-const Yup = require('yup');
 const authConfig = require('../Config/config');
-const User = require('../models/User');
-const crypt = require('../models/utils/crypt');
+const User = require('../schema/User');
+const bcrypt = require('bcryptjs');
 
 module.exports = {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      login: Yup.string().required(),
-      password: Yup.string().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.send(400).json({ error: 'Validation fails' });
-    }
     const { login, password } = req.body;
 
-    const user = await User.findOne({ where: { login } });
+    const user = await User.findOne({ login }).select('+password');
 
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
-    }
+    if (!user)
+      return res.status(400).send({ error: 'User not found' });
 
-    if (!(await crypt.checkPassword(password))) {
-      return res.status(401).json({ error: 'Password does not match!' });
-    }
+    if (!await bcrypt.compare(password, user.password))
+      return res.status(400).send({ error: 'Invalid password' });
+
+    user.password = undefined;
 
     const { id, name } = user;
 
