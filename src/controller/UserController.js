@@ -59,7 +59,7 @@ module.exports = {
       token: generateToken({ id: user.id })
     });
   },
-  //   async update(req, res) {
+  async update(req, res) {
 
-  //   },
+  },
 };

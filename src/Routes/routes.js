@@ -8,6 +8,6 @@ const routes = Router();
 
 routes.post('/cadastro', UserController.store);
 routes.post('/login', SessionController.store);
-routes.put('/user', authMiddleware);
+routes.put('/user/edit', authMiddleware);
 
 module.exports = routes;
