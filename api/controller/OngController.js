@@ -1,5 +1,5 @@
-const User = require('../schema/User');
 const jwt = require('jsonwebtoken');
+const Ong = require('../models/Ong');
 const authConfig = require('../Config/config');
 
 function generateToken(params = {}) {
@@ -8,15 +8,21 @@ function generateToken(params = {}) {
   });
 }
 module.exports = {
+  async index(req, res) {
+    const ongs = await Ong.find();
+
+    return res.json(ongs);
+  },
+
   async store(req, res) {
-    const userExists = await User.findOne(
-      { where: { email: req.body.email } } || { where: req.body.cpf } || {
-        where: req.body.tel,
-      }
+    const userExists = await Ong.findOne(
+      { where: { email: req.body.email } } || { where: req.body.cnpj } || {
+          where: req.body.tel,
+        }
     );
 
     if (userExists) {
-      return res.status(400).json({ error: 'Usuário existente' });
+      return res.status(400).json({ error: 'Ong existente' });
     }
 
     const {
@@ -24,10 +30,9 @@ module.exports = {
       login,
       password,
       email,
-      cpf,
+      cnpj,
       dtNasc,
       address,
-      sexo,
       tel,
       latitude,
       longitude,
@@ -38,28 +43,24 @@ module.exports = {
       coordinates: [longitude, latitude],
     };
 
-
-    const user = await User.create({
+    const ong = await Ong.create({
       name,
       login,
       password,
       email,
-      cpf,
+      cnpj,
       dtNasc,
       address,
-      sexo,
       tel,
       location,
     });
 
-    user.password = undefined;
+    ong.password = undefined;
 
     return res.json({
-      user,
-      token: generateToken({ id: user.id })
+      ong,
+      token: generateToken({ id: ong.id }),
     });
   },
-  //   async update(req, res) {
-
-  //   },
+  async update(req, res) {},
 };

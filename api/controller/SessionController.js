@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const authConfig = require('../Config/config');
-const User = require('../schema/User');
 const bcrypt = require('bcryptjs');
+const authConfig = require('../Config/config');
+const User = require('../models/User');
 
 module.exports = {
   async store(req, res) {
@@ -9,10 +9,9 @@ module.exports = {
 
     const user = await User.findOne({ login }).select('+password');
 
-    if (!user)
-      return res.status(400).send({ error: 'User not found' });
+    if (!user) return res.status(400).send({ error: 'User not found' });
 
-    if (!await bcrypt.compare(password, user.password))
+    if (!(await bcrypt.compare(password, user.password)))
       return res.status(400).send({ error: 'Invalid password' });
 
     user.password = undefined;
