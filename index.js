@@ -1,12 +1,13 @@
 const express = require('express');
+const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const swaggerjsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const logger = require('morgan');
+const swaggerDoc = require('./api/swagger');
 const routes = require('./api/Routes/routes');
 const configdb = require('./api/Config/config');
 
-const app = express();
+const app = express(express);
 const conn = configdb.database;
 
 mongoose.connect(conn, {
@@ -17,39 +18,31 @@ mongoose.connect(conn, {
 });
 mongoose.set('useCreateIndex', true);
 mongoose.connection.on('error', err => {
+  // eslint-disable-next-line no-console
   console.error(`Erro na conexão com o banco de dados! ${err}`);
 });
 mongoose.connection.on('disconnected', () => {
+  // eslint-disable-next-line no-console
   console.error('Aplicação desconectada do banco de dados! ');
 });
 mongoose.connection.on('connected', () => {
+  // eslint-disable-next-line no-console
   console.log('Aplicação conectada do banco de dados! ');
 });
 
-const swaggerOptions = {
-  swaggerDefinition: {
-    info: {
-      title: 'TechConnective',
-      description: 'Api em NodeJS da TechConnective',
-      contact: {
-        name: 'Developement',
-      },
-      servers: ['localhost:3333'],
-    },
-  },
-  apis: ['index.js'],
-};
-
-const swaggerDocs = swaggerjsDoc(swaggerOptions);
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+routes(app);
+swaggerDoc(app);
 
 app.use(express.json());
-app.use(routes);
 
 app.use(cors());
-
+app.use((req, res, next, err) => {
+  // eslint-disable-next-line no-console
+  console.error('There was an error', err);
+});
+app.use(logger('dev'));
+const server = http.createServer(app);
 const port = process.env.PORT || 3333;
-app.listen(port);
+server.listen(port);
 
 module.exports = app;
