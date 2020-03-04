@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const SwaggerExpress = require('swagger-express-mw');
+const swaggerjsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const routes = require('./api/Routes/routes');
 const configdb = require('./api/Config/config');
 
@@ -25,25 +26,30 @@ mongoose.connection.on('connected', () => {
   console.log('Aplicação conectada do banco de dados! ');
 });
 
-const config = {
-  appRoot: __dirname, // required config
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'TechConnective',
+      description: 'Api em NodeJS da TechConnective',
+      contact: {
+        name: 'Developement',
+      },
+      servers: ['localhost:3333'],
+    },
+  },
+  apis: ['index.js'],
 };
 
-SwaggerExpress.create(config, (err, swaggerExpress) => {
-  if (err) {
-    throw err;
-  }
+const swaggerDocs = swaggerjsDoc(swaggerOptions);
 
-  swaggerExpress.register(app);
-
-  if (swaggerExpress.runner.swagger.paths['/hello']) {
-    console.log(`try this:\ncurl http://127.0.0.1:3333/hello?name=Scott`);
-  }
-});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(express.json());
 app.use(routes);
 
 app.use(cors());
+
+const port = process.env.PORT || 3333;
+app.listen(port);
 
 module.exports = app;
