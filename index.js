@@ -30,16 +30,12 @@ mongoose.connection.on('connected', () => {
   console.log('Aplicação conectada do banco de dados! ');
 });
 
-routes(app);
+app.use(routes);
 swaggerDoc(app);
 
 app.use(express.json());
 
 app.use(cors());
-app.use((req, res, next, err) => {
-  // eslint-disable-next-line no-console
-  console.error('There was an error', err);
-});
 app.use(logger('dev'));
 const server = http.createServer(app);
 const port = process.env.PORT || 3333;
