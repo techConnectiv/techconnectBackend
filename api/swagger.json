@@ -6,7 +6,7 @@
     "description": "PI project: Techconnective"
   },
   "host": "localhost:3333",
-  "basePath": "/api/",
+  "basePath": "/",
   "tags": [
     {
       "name": "Users",

@@ -5,14 +5,11 @@ const SessionController = require('../controllers/SessionController');
 const authMiddleware = require('../middleware/auth');
 
 const routes = Router();
-
-routes.get('/', (req, res) => {
-  res.json({ message: 'Helo World' });
-});
+// usuários
+routes.get('/user', UserController.index);
 routes.post('/cadastro', UserController.store);
-
 routes.post('/login', SessionController.store);
 routes.put('/:id/user', authMiddleware);
-routes.get('/ong/list', OngController.index);
+routes.get('/ongs', OngController.index);
 
 module.exports = routes;

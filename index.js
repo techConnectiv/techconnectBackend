@@ -2,12 +2,11 @@ const express = require('express');
 const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const logger = require('morgan');
-const swaggerDoc = require('./api/swagger');
+const { createDocsRoute } = require('./api/swagger');
 const routes = require('./api/Routes/routes');
 const configdb = require('./api/Config/config');
 
-const app = express(express);
+const app = express();
 const conn = configdb.database;
 
 mongoose.connect(conn, {
@@ -31,12 +30,10 @@ mongoose.connection.on('connected', () => {
 });
 
 app.use(routes);
-swaggerDoc(app);
-
+createDocsRoute(app);
 app.use(express.json());
 
 app.use(cors());
-app.use(logger('dev'));
 const server = http.createServer(app);
 const port = process.env.PORT || 3333;
 server.listen(port);

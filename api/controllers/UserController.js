@@ -8,6 +8,11 @@ function generateToken(params = {}) {
   });
 }
 module.exports = {
+  async index(req, res) {
+    const user = User.find();
+
+    res.json(user);
+  },
   async store(req, res) {
     const {
       name,
