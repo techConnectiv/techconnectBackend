@@ -7,8 +7,7 @@ module.exports = {
     return res.json(doacao);
   },
 
-  // async store(req, res) {
-
-  //   const availableOng = req.body;
-  // }
+  async store(req, res) {
+    return res.json({ message: 'ok' });
+  },
 };

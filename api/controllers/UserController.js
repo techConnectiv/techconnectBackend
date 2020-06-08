@@ -35,6 +35,7 @@ module.exports = {
       cpf,
       sexo,
       location,
+      address: User.address,
     });
 
     delete user.password;
