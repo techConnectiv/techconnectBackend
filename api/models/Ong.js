@@ -3,20 +3,15 @@ const bcrypt = require('bcryptjs');
 const Address = require('./utils/Address');
 const PointSchema = require('./utils/PointSchema');
 
-const UserSchema = new mongoose.Schema({
-  name: {
+const OngSchema = new mongoose.Schema({
+  nomeInst: {
     type: String,
-    require: true,
-  },
-  login: {
-    type: String,
-    require: true,
+    required: true,
   },
   password: {
     type: String,
     required: true,
     select: false,
-    virtual: true,
   },
   email: {
     type: String,
@@ -24,29 +19,19 @@ const UserSchema = new mongoose.Schema({
     required: true,
     lowercase: true,
   },
-  cpf: {
+  cnpj: {
     type: String,
     unique: true,
     required: true,
   },
   dtNasc: {
     type: Date,
-    required: true,
-  },
-  sexo: {
-    type: String,
-    enum: ['M', 'F', 'OUTROS'],
-    required: true,
+    required: false,
   },
   address: Address,
   tel: {
-    res: {
+    com: {
       type: Number,
-    },
-    movel: {
-      type: Number,
-      required: true,
-      unique: true,
     },
   },
   location: {
@@ -55,11 +40,10 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre('save', async function (next) {
-  const hash = await bcrypt.hash(this.password, 10);
+OngSchema.pre('save', async next => {
+  const hash = await bcrypt.hash(toString(this.password), 8);
   this.password = hash;
-
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('colOng', OngSchema);
