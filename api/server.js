@@ -1,6 +1,5 @@
 const https = require('https');
 const http = require('http');
-const serverless = require('serverless-http');
 const fs = require('fs');
 const path = require('path');
 const app = require('./app');
@@ -17,5 +16,3 @@ server.listen(443);
 
 const serv = http.createServer(app);
 serv.listen(80, () => console.log(`Servidor escutando na porta 80`));
-
-module.exports.handler = serverless(app);
