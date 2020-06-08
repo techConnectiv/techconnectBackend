@@ -14,27 +14,12 @@ module.exports = {
     res.json(user);
   },
   async store(req, res) {
-    const {
-      name,
-      login,
-      password,
-      email,
-      cpf,
-      dtNasc,
-      address,
-      sexo,
-      tel,
-      latitude,
-      longitude,
-    } = req.body;
+    const { name, email, password, cpf, sexo, latitude, longitude } = req.body;
 
-    const userExists = await User.findOne(
-      { where: { email: req.body.email } } || { where: req.body.cpf } || {
-          where: req.body.tel,
-        }
-    );
+    const userExists = await User.findOne({ email: req.body.email });
+    const userCpfExists = await User.findOne({ cpf: req.body.cpf });
 
-    if (userExists) {
+    if (userExists || userCpfExists) {
       return res.status(400).json({ error: 'Usuário existente' });
     }
 
@@ -45,25 +30,52 @@ module.exports = {
 
     const user = await User.create({
       name,
-      login,
       password,
       email,
       cpf,
-      dtNasc,
-      address,
       sexo,
-      tel,
       location,
     });
 
-    user.password = undefined;
+    delete user.password;
 
     return res.json({
       user,
       token: generateToken({ id: user.id }),
     });
   },
-  //   async update(req, res) {
+  async update(req, res) {
+    const user = User.findById({ id: req.body.id });
 
-  //   },
+    if (!user) {
+      return res.status(400).json({ message: 'usuário não encontrado' });
+    }
+
+    const {
+      password = user.password,
+      address = user.address,
+      longitude = user.location.coordinates[0],
+      latitude = user.location.coordinates[1],
+      telFixo = user.tel.res,
+      telCelular = user.tel.movel,
+    } = req.body;
+
+    const location = {
+      type: 'Point',
+      coordinates: [longitude, latitude],
+    };
+    try {
+      const updateUser = await User.findOneAndUpdate(
+        user,
+        { password, address, telFixo, telCelular, location },
+        { new: true }
+      );
+
+      return res.json(updateUser);
+    } catch (err) {
+      res.status(400).json({ message: `Erro ao atualizar usuário, ${err}` });
+    }
+
+    return res.json(user);
+  },
 };

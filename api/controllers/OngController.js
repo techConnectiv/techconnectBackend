@@ -15,28 +15,21 @@ module.exports = {
   },
 
   async store(req, res) {
-    const userExists = await Ong.findOne(
-      { where: { email: req.body.email } } || { where: req.body.cnpj } || {
-          where: req.body.tel,
-        }
-    );
+    const ongEmailExists = await Ong.findOne({ email: req.body.email });
 
-    if (userExists) {
+    const ongCnpjExists = await Ong.findOne({
+      cnpj: req.body.cnpj,
+    });
+
+    const ongNameExists = await Ong.findOne({
+      cnpj: req.body.nomeInst,
+    });
+
+    if (ongEmailExists || ongCnpjExists || ongNameExists) {
       return res.status(400).json({ error: 'Ong existente' });
     }
 
-    const {
-      name,
-      login,
-      password,
-      email,
-      cnpj,
-      dtNasc,
-      address,
-      tel,
-      latitude,
-      longitude,
-    } = req.body;
+    const { nomeInst, password, email, cnpj, latitude, longitude } = req.body;
 
     const location = {
       type: 'Point',
@@ -44,23 +37,19 @@ module.exports = {
     };
 
     const ong = await Ong.create({
-      name,
-      login,
+      nomeInst,
       password,
       email,
       cnpj,
-      dtNasc,
-      address,
-      tel,
       location,
     });
 
-    ong.password = undefined;
+    delete ong.password;
 
-    return res.json({
+    return res.status(201).json({
       ong,
       token: generateToken({ id: ong.id }),
     });
   },
-  async update(req, res) {},
+  // async update(req, res) {},
 };

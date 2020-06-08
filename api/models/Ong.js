@@ -6,11 +6,7 @@ const PointSchema = require('./utils/PointSchema');
 const OngSchema = new mongoose.Schema({
   nomeInst: {
     type: String,
-    require: true,
-  },
-  login: {
-    type: String,
-    require: true,
+    required: true,
   },
   password: {
     type: String,
@@ -30,7 +26,7 @@ const OngSchema = new mongoose.Schema({
   },
   dtNasc: {
     type: Date,
-    required: true,
+    required: false,
   },
   address: Address,
   tel: {
@@ -45,9 +41,9 @@ const OngSchema = new mongoose.Schema({
 });
 
 OngSchema.pre('save', async next => {
-  const hash = await bcrypt.hash(this.password, 10);
+  const hash = await bcrypt.hash(toString(this.password), 8);
   this.password = hash;
   next();
 });
 
-module.exports = mongoose.model('Ong', OngSchema);
+module.exports = mongoose.model('colOng', OngSchema);

@@ -5,16 +5,17 @@ const User = require('../models/User');
 
 module.exports = {
   async store(req, res) {
-    const { login, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ login }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user) return res.status(400).send({ error: 'User not found' });
 
-    if (!(await bcrypt.compare(password, user.password)))
+    if (!(await bcrypt.compare(password, user.password))) {
       return res.status(400).send({ error: 'Invalid password' });
+    }
 
-    user.password = undefined;
+    delete user.password;
 
     const { id, name } = user;
 
@@ -22,7 +23,7 @@ module.exports = {
       user: {
         id,
         name,
-        login,
+        email,
       },
       token: jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,

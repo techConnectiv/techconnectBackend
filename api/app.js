@@ -1,12 +1,12 @@
 const express = require('express');
-const http = require('http');
+require('express-async-errors');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { createDocsRoute } = require('./api/swagger');
-const routes = require('./api/Routes/routes');
-const configdb = require('./api/Config/config');
+const routes = require('./Routes/routes');
+const configdb = require('./Config/config');
 
 const app = express();
+
 const conn = configdb.database;
 
 mongoose.connect(conn, {
@@ -29,13 +29,9 @@ mongoose.connection.on('connected', () => {
   console.log('Aplicação conectada do banco de dados! ');
 });
 
-app.use(routes);
-createDocsRoute(app);
 app.use(express.json());
+app.use(routes);
 
 app.use(cors());
-const server = http.createServer(app);
-const port = process.env.PORT || 3333;
-server.listen(port);
 
 module.exports = app;

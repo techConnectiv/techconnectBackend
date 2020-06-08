@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 
 const Address = new mongoose.Schema({
   cep: {
-    type: Number,
-    required: true,
+    type: String,
+    required: false,
   },
   logradouro: {
     type: String,
-    required: true,
+    required: false,
   },
   numero: {
     type: Number,
-    required: true,
+    required: false,
   },
   estado: {
     type: String,
-    required: true,
+    required: false,
     enum: [
       'AC',
       'AL',
@@ -48,11 +48,11 @@ const Address = new mongoose.Schema({
   },
   cidade: {
     type: String,
-    required: true,
+    required: false,
   },
   bairro: {
     type: String,
-    required: true,
+    required: false,
   },
   complemento: {
     type: String,

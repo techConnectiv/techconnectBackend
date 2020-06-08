@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Address = require('./utils/Address');
@@ -5,10 +6,6 @@ const PointSchema = require('./utils/PointSchema');
 
 const UserSchema = new mongoose.Schema({
   name: {
-    type: String,
-    require: true,
-  },
-  login: {
     type: String,
     require: true,
   },
@@ -30,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   },
   dtNasc: {
     type: Date,
-    required: true,
+    required: false,
   },
   sexo: {
     type: String,
@@ -44,8 +41,7 @@ const UserSchema = new mongoose.Schema({
     },
     movel: {
       type: Number,
-      required: true,
-      unique: true,
+      required: false,
     },
   },
   location: {
@@ -54,10 +50,10 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre('save', async next => {
+UserSchema.pre('save', async function(next) {
   const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('colUser', UserSchema);
