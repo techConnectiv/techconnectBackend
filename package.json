@@ -20,7 +20,7 @@
     "express-handlebars": "^4.0.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.9",
-    "nodemailer": "^6.4.8",
+    "nodemailer": "^6.4.16",
     "nodemailer-express-handlebars": "^4.0.0",
     "npm": "^6.14.5",
     "serverless": "^1.72.0",
